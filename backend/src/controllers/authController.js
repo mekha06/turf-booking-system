@@ -7,13 +7,11 @@ const asyncHandler = require("express-async-handler");
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
-  // Check all fields
   if (!name || !email || !password) {
     res.status(400);
     throw new Error("All fields are required");
   }
 
-  // Check existing user
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
@@ -21,19 +19,15 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error("User already exists");
   }
 
-  // Hash password
   const salt = await bcrypt.genSalt(10);
-
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  // Create user
   const user = await User.create({
     name,
     email,
     password: hashedPassword,
   });
 
-  // Response
   res.status(201).json({
     success: true,
     message: "User registered successfully",
@@ -42,7 +36,7 @@ const registerUser = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
-      token: generateToken(user._id),
+      token: generateToken(user),
     },
   });
 });
@@ -51,13 +45,11 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  // Check fields
   if (!email || !password) {
     res.status(400);
     throw new Error("Email and password are required");
   }
 
-  // Find user
   const user = await User.findOne({ email });
 
   if (!user) {
@@ -65,7 +57,6 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid credentials");
   }
 
-  // Compare password
   const isMatch = await bcrypt.compare(password, user.password);
 
   if (!isMatch) {
@@ -73,7 +64,6 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid credentials");
   }
 
-  // Success response
   res.status(200).json({
     success: true,
     message: "Login successful",
@@ -82,7 +72,7 @@ const loginUser = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
-      token: generateToken(user._id),
+      token: generateToken(user),
     },
   });
 });

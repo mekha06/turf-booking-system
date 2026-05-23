@@ -27,17 +27,32 @@ function Login() {
         formData
       );
 
+      const userData = res.data.data;
+
       localStorage.setItem(
         "token",
-        res.data.data.token
+        userData.token
+      );
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(userData)
       );
 
       toast.success("Login successful");
 
-      navigate("/");
+      if (userData.role === "owner") {
+        navigate("/owner");
+      } else if (userData.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
+
     } catch (error) {
       toast.error(
-        error.response?.data?.message || "Login failed"
+        error.response?.data?.message ||
+          "Login failed"
       );
     }
   };
