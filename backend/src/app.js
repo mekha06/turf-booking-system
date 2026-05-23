@@ -7,6 +7,7 @@ const slotRoutes = require("./routes/slotRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const errorHandler = require("./middlewares/errorMiddleware");
+const aiRoutes = require("./routes/aiRoutes");
 const app = express();
 
 // Middlewares
@@ -19,6 +20,7 @@ app.use("/api/turfs", turfRoutes);
 app.use("/api/slots", slotRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/ai", aiRoutes);
 
 // Test Route
 app.get("/", (req, res) => {
