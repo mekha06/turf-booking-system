@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import API from "../api/axiosInstance";
 import toast from "react-hot-toast";
 
 function TurfDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
+
   const [slots, setSlots] = useState([]);
 
   const fetchSlots = async () => {
@@ -21,15 +23,20 @@ function TurfDetails() {
   }, [id]);
 
   const handleBooking = async (slot) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      toast.error("Please login or register first");
+      navigate("/login");
+      return;
+    }
+
     try {
       const amount = slot.turf?.pricePerHour || 500;
 
-      const orderRes = await API.post(
-        "/payments/create-order",
-        {
-          amount,
-        }
-      );
+      const orderRes = await API.post("/payments/create-order", {
+        amount,
+      });
 
       const order = orderRes.data.data;
 
@@ -42,22 +49,15 @@ function TurfDetails() {
         order_id: order.id,
 
         handler: async function (response) {
-          const verifyRes = await API.post(
-            "/payments/verify",
-            {
-              turf: id,
-              slot: slot._id,
-              razorpay_order_id:
-                response.razorpay_order_id,
-              razorpay_payment_id:
-                response.razorpay_payment_id,
-              razorpay_signature:
-                response.razorpay_signature,
-            }
-          );
+          const verifyRes = await API.post("/payments/verify", {
+            turf: id,
+            slot: slot._id,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+          });
 
           toast.success(verifyRes.data.message);
-
           fetchSlots();
         },
 
@@ -66,14 +66,17 @@ function TurfDetails() {
         },
       };
 
-      const razorpayWindow =
-        new window.Razorpay(options);
-
+      const razorpayWindow = new window.Razorpay(options);
       razorpayWindow.open();
     } catch (error) {
+      if (error.response?.status === 401) {
+        toast.error("Please login or register first");
+        navigate("/login");
+        return;
+      }
+
       toast.error(
-        error.response?.data?.message ||
-          "Payment failed"
+        error.response?.data?.message || "Payment failed"
       );
     }
   };
@@ -93,15 +96,12 @@ function TurfDetails() {
             <p>Date: {slot.date}</p>
 
             <p>
-              Time: {slot.startTime} -{" "}
-              {slot.endTime}
+              Time: {slot.startTime} - {slot.endTime}
             </p>
 
             <p>
               Status:{" "}
-              {slot.isBooked
-                ? "Booked"
-                : "Available"}
+              {slot.isBooked ? "Booked" : "Available"}
             </p>
 
             <button
