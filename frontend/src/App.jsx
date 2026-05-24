@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -10,27 +10,27 @@ import OwnerDashboard from "./pages/OwnerDashboard";
 
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
-
 import { Toaster } from "react-hot-toast";
 
-function App() {
+function AppContent() {
+  const location = useLocation();
+
+  const hideNavbar =
+    location.pathname === "/login" ||
+    location.pathname === "/register";
+
   return (
-    <BrowserRouter>
+    <>
       <Toaster position="top-right" />
 
-      <Navbar />
+      {!hideNavbar && <Navbar />}
 
       <Routes>
-        {/* Public Routes */}
         <Route path="/" element={<Home />} />
-
         <Route path="/register" element={<Register />} />
-
         <Route path="/login" element={<Login />} />
-
         <Route path="/turfs/:id" element={<TurfDetails />} />
 
-        {/* Protected User Routes */}
         <Route
           path="/recommendations"
           element={
@@ -49,7 +49,6 @@ function App() {
           }
         />
 
-        {/* Protected Owner Route */}
         <Route
           path="/owner"
           element={
@@ -59,6 +58,14 @@ function App() {
           }
         />
       </Routes>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
     </BrowserRouter>
   );
 }
