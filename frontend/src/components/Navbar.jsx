@@ -1,12 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 function Navbar() {
+  const location = useLocation();
   const token = localStorage.getItem("token");
+
+  const isHomePage = location.pathname === "/";
 
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    window.location.href = "/login";
+    window.location.href = "/";
   };
 
   return (
@@ -20,7 +23,17 @@ function Navbar() {
           Home
         </Link>
 
-        {token ? (
+        {isHomePage ? (
+          <>
+            <Link to="/login" className="text-gray-700">
+              Login
+            </Link>
+
+            <Link to="/register" className="text-gray-700">
+              Register
+            </Link>
+          </>
+        ) : token ? (
           <>
             <Link to="/my-bookings" className="text-gray-700">
               My Bookings
