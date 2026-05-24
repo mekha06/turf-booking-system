@@ -97,17 +97,43 @@ const getTurfs = asyncHandler(async (req, res) => {
 });
 
 // GET MY TURFS
-const getMyTurfs = asyncHandler(async (req, res) => {
-  const turfs = await Turf.find({
-    owner: req.user._id,
-  }).populate("owner", "name email");
+// GET ALL TURFS
+const getTurfs = asyncHandler(async (req, res) => {
+  const filters = {};
+
+  // Keyword Search
+  if (req.query.keyword) {
+    filters.name = {
+      $regex: req.query.keyword,
+      $options: "i",
+    };
+  }
+
+  // Sport Type Filter
+  if (req.query.sportType) {
+    filters.sportType = req.query.sportType;
+  }
+
+  // Location Filter
+  if (req.query.location) {
+    filters.location = req.query.location;
+  }
+
+  const sort = req.query.sort || "-createdAt";
+
+  const turfs = await Turf.find(filters)
+    .populate("owner", "name email")
+    .sort(sort);
 
   res.status(200).json({
     success: true,
+    totalTurfs: turfs.length,
     count: turfs.length,
+    sort,
     data: turfs,
   });
 });
+
 
 // UPDATE TURF
 const updateTurf = asyncHandler(async (req, res) => {
