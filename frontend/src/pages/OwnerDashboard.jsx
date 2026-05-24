@@ -60,6 +60,7 @@ function OwnerDashboard() {
 
     try {
       setLoading(true);
+
       const payload = {
         ...formData,
         pricePerHour: Number(formData.pricePerHour),
@@ -84,9 +85,8 @@ function OwnerDashboard() {
       setMessage(
         error.response?.data?.message || "Failed to create turf"
       );
-    }
-    finally {
-  setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -95,6 +95,7 @@ function OwnerDashboard() {
 
     try {
       setLoading(true);
+
       const payload = {
         turfId: slotForm.turfId,
         date: slotForm.date,
@@ -118,8 +119,31 @@ function OwnerDashboard() {
       setMessage(
         error.response?.data?.message || "Failed to generate slots"
       );
+    } finally {
+      setLoading(false);
     }
-      finally {
+  };
+
+  const handleDeleteTurf = async (turfId) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this turf?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      setLoading(true);
+
+      await API.delete(`/turfs/${turfId}`);
+
+      setMessage("Turf deleted successfully");
+
+      fetchOwnerData();
+    } catch (error) {
+      setMessage(
+        error.response?.data?.message || "Failed to delete turf"
+      );
+    } finally {
       setLoading(false);
     }
   };
@@ -139,18 +163,30 @@ function OwnerDashboard() {
       {analytics && (
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white p-6 rounded-xl shadow">
-            <h2 className="text-lg font-semibold">Total Bookings</h2>
-            <p className="text-3xl font-bold">{analytics.totalBookings}</p>
+            <h2 className="text-lg font-semibold">
+              Total Bookings
+            </h2>
+            <p className="text-3xl font-bold">
+              {analytics.totalBookings}
+            </p>
           </div>
 
           <div className="bg-white p-6 rounded-xl shadow">
-            <h2 className="text-lg font-semibold">Active Bookings</h2>
-            <p className="text-3xl font-bold">{analytics.activeBookings}</p>
+            <h2 className="text-lg font-semibold">
+              Active Bookings
+            </h2>
+            <p className="text-3xl font-bold">
+              {analytics.activeBookings}
+            </p>
           </div>
 
           <div className="bg-white p-6 rounded-xl shadow">
-            <h2 className="text-lg font-semibold">Cancelled Bookings</h2>
-            <p className="text-3xl font-bold">{analytics.cancelledBookings}</p>
+            <h2 className="text-lg font-semibold">
+              Cancelled Bookings
+            </h2>
+            <p className="text-3xl font-bold">
+              {analytics.cancelledBookings}
+            </p>
           </div>
         </div>
       )}
@@ -220,11 +256,11 @@ function OwnerDashboard() {
         </div>
 
         <button
-         disabled={loading}
-         className="mt-4 bg-blue-600 text-white px-6 py-3 rounded-lg disabled:bg-gray-400"
->
-         {loading ? "Processing..." : "Create Turf"}
-         </button>
+          disabled={loading}
+          className="mt-4 bg-blue-600 text-white px-6 py-3 rounded-lg disabled:bg-gray-400"
+        >
+          {loading ? "Processing..." : "Create Turf"}
+        </button>
       </form>
 
       <form
@@ -287,22 +323,58 @@ function OwnerDashboard() {
         </div>
 
         <button
-        disabled={loading}
-        className="mt-4 bg-green-600 text-white px-6 py-3 rounded-lg disabled:bg-gray-400"
->
-        {loading ? "Processing..." : "Generate Slots"}
+          disabled={loading}
+          className="mt-4 bg-green-600 text-white px-6 py-3 rounded-lg disabled:bg-gray-400"
+        >
+          {loading ? "Processing..." : "Generate Slots"}
         </button>
       </form>
 
-      <h2 className="text-2xl font-bold mb-4">My Turfs</h2>
+      <h2 className="text-2xl font-bold mb-4">
+        My Turfs
+      </h2>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {turfs.map((turf) => (
-          <div key={turf._id} className="bg-white p-5 rounded-xl shadow">
-            <h3 className="text-xl font-bold">{turf.name}</h3>
-            <p>{turf.location}</p>
-            <p>{turf.sportType}</p>
-            <p className="font-semibold">₹{turf.pricePerHour}/hour</p>
+          <div
+            key={turf._id}
+            className="bg-white p-5 rounded-xl shadow"
+          >
+            {turf.image && (
+              <img
+                src={turf.image}
+                alt={turf.name}
+                className="w-full h-40 object-cover rounded-lg mb-4"
+              />
+            )}
+
+            <h3 className="text-xl font-bold">
+              {turf.name}
+            </h3>
+
+            <p className="text-gray-600">
+              {turf.location}
+            </p>
+
+            <p className="mt-1">
+              {turf.sportType}
+            </p>
+
+            <p className="font-semibold mt-1">
+              ₹{turf.pricePerHour}/hour
+            </p>
+
+            <p className="text-sm text-gray-500 mt-2">
+              {turf.description}
+            </p>
+
+            <button
+              disabled={loading}
+              onClick={() => handleDeleteTurf(turf._id)}
+              className="mt-4 w-full bg-red-600 text-white p-2 rounded-lg disabled:bg-gray-400"
+            >
+              Delete Turf
+            </button>
           </div>
         ))}
       </div>
