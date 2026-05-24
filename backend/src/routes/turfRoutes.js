@@ -15,9 +15,10 @@ const {
 
 const router = express.Router();
 
-// Create Turf
-router.post("/", protect, ownerOrAdmin, createTurf);
+// Public Route - Get All Turfs
+router.get("/", getTurfs);
 
+// Owner Route - Get My Turfs
 router.get(
   "/my-turfs",
   protect,
@@ -25,7 +26,10 @@ router.get(
   getMyTurfs
 );
 
-// Update Turf
+// Owner Route - Create Turf
+router.post("/", protect, ownerOrAdmin, createTurf);
+
+// Owner Route - Update Turf
 router.put(
   "/:id",
   protect,
@@ -33,15 +37,12 @@ router.put(
   updateTurf
 );
 
-// Delete Turf
+// Owner Route - Delete Turf
 router.delete(
   "/:id",
   protect,
   ownerOrAdmin,
   deleteTurf
 );
-
-// Get All Turfs
-router.get("/", getTurfs);
 
 module.exports = router;
