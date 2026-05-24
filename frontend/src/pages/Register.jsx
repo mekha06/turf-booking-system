@@ -28,18 +28,21 @@ function Register() {
         formData
       );
 
-      toast.success(res.data.message);
+      const userData = res.data.data;
 
-      localStorage.setItem(
-        "token",
-        res.data.data.token
-      );
+      localStorage.setItem("token", userData.token);
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      toast.success("Registration successful");
 
       navigate("/");
     } catch (error) {
+      console.log("REGISTER ERROR:", error.response?.data || error);
+
       toast.error(
         error.response?.data?.message ||
           error.response?.data?.errors?.[0]?.msg ||
+          error.message ||
           "Registration failed"
       );
     }
