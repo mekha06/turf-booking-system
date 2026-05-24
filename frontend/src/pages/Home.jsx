@@ -4,32 +4,18 @@ import { Link } from "react-router-dom";
 
 function Home() {
   const [turfs, setTurfs] = useState([]);
-  const [recommendations, setRecommendations] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      // Public data: should load for everyone
+    const fetchTurfs = async () => {
       try {
         const turfRes = await API.get("/turfs");
         setTurfs(turfRes.data.data);
       } catch (error) {
         console.log("Failed to load turfs", error);
       }
-
-      // Private AI recommendations: only for logged-in users
-      const token = localStorage.getItem("token");
-
-      if (token) {
-        try {
-          const recRes = await API.get("/ai/recommendations");
-          setRecommendations(recRes.data.recommendations);
-        } catch (error) {
-          console.log("Failed to load recommendations", error);
-        }
-      }
     };
 
-    fetchData();
+    fetchTurfs();
   }, []);
 
   return (
@@ -38,7 +24,7 @@ function Home() {
         Available Turfs
       </h1>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {turfs.map((turf) => (
           <div
             key={turf._id}
@@ -67,52 +53,8 @@ function Home() {
           </div>
         ))}
       </div>
-
-      {recommendations.length > 0 && (
-        <>
-          <h1 className="text-3xl font-bold mb-6">
-            Recommended Slots for You
-          </h1>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recommendations.map((rec) => (
-              <div
-                key={rec.slotId}
-                className="bg-white rounded-xl shadow-md p-5 border-l-4 border-emerald-600"
-              >
-                <h2 className="text-xl font-bold">
-                  {rec.turfName}
-                </h2>
-
-                <p className="text-gray-600">
-                  {rec.location}
-                </p>
-
-                <p>Sport: {rec.sportType}</p>
-                <p>Date: {rec.date}</p>
-                <p>Time: {rec.time}</p>
-
-                <p className="font-semibold">
-                  ₹{rec.pricePerHour}/hour
-                </p>
-
-                <p className="mt-3 text-sm text-emerald-700">
-                  {rec.reason}
-                </p>
-
-                <Link
-                  to={`/turfs/${rec.turfId}`}
-                  className="block mt-4 text-center bg-emerald-600 text-white p-2 rounded-lg"
-                >
-                  View Recommended Slot
-                </Link>
-              </div>
-            ))}
-          </div>
-        </>
-      )}
     </div>
   );
-  }
+}
 
 export default Home;

@@ -46,7 +46,7 @@ function Login() {
       } else if (userData.role === "admin") {
         navigate("/admin");
       } else {
-        navigate("/");
+        navigate("/recommendations");
       }
 
     } catch (error) {
