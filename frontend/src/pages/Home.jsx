@@ -7,20 +7,28 @@ function Home() {
   const [recommendations, setRecommendations] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const turfRes = await API.get("/turfs");
-        setTurfs(turfRes.data.data);
+  const fetchData = async () => {
+    try {
+      const turfRes = await API.get("/turfs");
+      setTurfs(turfRes.data.data);
+    } catch (error) {
+      console.log("Failed to load turfs", error);
+    }
 
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      try {
         const recRes = await API.get("/ai/recommendations");
         setRecommendations(recRes.data.recommendations);
       } catch (error) {
-        console.log(error);
+        console.log("Failed to load recommendations", error);
       }
-    };
+    }
+  };
 
-    fetchData();
-  }, []);
+  fetchData();
+}, []);
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
