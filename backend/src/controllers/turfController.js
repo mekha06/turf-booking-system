@@ -14,17 +14,17 @@ const createTurf = asyncHandler(async (req, res) => {
   } = req.body;
 
   const existingTurf = await Turf.findOne({
-  name,
-  location,
-  owner: req.user._id,
-});
-
-if (existingTurf) {
-  return res.status(400).json({
-    success: false,
-    message: "Turf already exists for this owner at this location",
+    name,
+    location,
+    owner: req.user._id,
   });
-}
+
+  if (existingTurf) {
+    return res.status(400).json({
+      success: false,
+      message: "Turf already exists for this owner at this location",
+    });
+  }
 
   const turf = await Turf.create({
     name,
@@ -44,64 +44,10 @@ if (existingTurf) {
   });
 });
 
-// GET ALL TURFS WITH PAGINATION + FILTERING + SORTING + SEARCH
-const getTurfs = asyncHandler(async (req, res) => {
-  const page = Number(req.query.page) || 1;
-
-  const limit = Number(req.query.limit) || 5;
-
-  const skip = (page - 1) * limit;
-
-  const filters = {};
-
-  // Keyword Search
-  if (req.query.keyword) {
-    filters.name = {
-      $regex: req.query.keyword,
-      $options: "i",
-    };
-  }
-
-  // Sport Type Filter
-  if (req.query.sportType) {
-    filters.sportType = req.query.sportType;
-  }
-
-  // Location Filter
-  if (req.query.location) {
-    filters.location = req.query.location;
-  }
-
-  // Sorting
-  const sort = req.query.sort || "-createdAt";
-
-  // Fetch Turfs
-  const turfs = await Turf.find(filters)
-    .populate("owner", "name email")
-    .sort(sort)
-    .skip(skip)
-    .limit(limit);
-
-  // Total Count
-  const total = await Turf.countDocuments(filters);
-
-  res.status(200).json({
-    success: true,
-    currentPage: page,
-    totalPages: Math.ceil(total / limit),
-    totalTurfs: total,
-    count: turfs.length,
-    sort,
-    data: turfs,
-  });
-});
-
-// GET MY TURFS
 // GET ALL TURFS
 const getTurfs = asyncHandler(async (req, res) => {
   const filters = {};
 
-  // Keyword Search
   if (req.query.keyword) {
     filters.name = {
       $regex: req.query.keyword,
@@ -109,12 +55,10 @@ const getTurfs = asyncHandler(async (req, res) => {
     };
   }
 
-  // Sport Type Filter
   if (req.query.sportType) {
     filters.sportType = req.query.sportType;
   }
 
-  // Location Filter
   if (req.query.location) {
     filters.location = req.query.location;
   }
@@ -134,12 +78,23 @@ const getTurfs = asyncHandler(async (req, res) => {
   });
 });
 
+// GET MY TURFS
+const getMyTurfs = asyncHandler(async (req, res) => {
+  const turfs = await Turf.find({
+    owner: req.user._id,
+  }).populate("owner", "name email");
+
+  res.status(200).json({
+    success: true,
+    count: turfs.length,
+    data: turfs,
+  });
+});
 
 // UPDATE TURF
 const updateTurf = asyncHandler(async (req, res) => {
   const turf = await Turf.findById(req.params.id);
 
-  // Turf not found
   if (!turf) {
     return res.status(404).json({
       success: false,
@@ -147,7 +102,6 @@ const updateTurf = asyncHandler(async (req, res) => {
     });
   }
 
-  // Ownership check
   if (turf.owner.toString() !== req.user._id.toString()) {
     return res.status(403).json({
       success: false,
@@ -175,7 +129,6 @@ const updateTurf = asyncHandler(async (req, res) => {
 const deleteTurf = asyncHandler(async (req, res) => {
   const turf = await Turf.findById(req.params.id);
 
-  // Turf not found
   if (!turf) {
     return res.status(404).json({
       success: false,
@@ -183,7 +136,6 @@ const deleteTurf = asyncHandler(async (req, res) => {
     });
   }
 
-  // Ownership check
   if (turf.owner.toString() !== req.user._id.toString()) {
     return res.status(403).json({
       success: false,
