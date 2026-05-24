@@ -7,28 +7,30 @@ function Home() {
   const [recommendations, setRecommendations] = useState([]);
 
   useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const turfRes = await API.get("/turfs");
-      setTurfs(turfRes.data.data);
-    } catch (error) {
-      console.log("Failed to load turfs", error);
-    }
-
-    const token = localStorage.getItem("token");
-
-    if (token) {
+    const fetchData = async () => {
+      // Public data: should load for everyone
       try {
-        const recRes = await API.get("/ai/recommendations");
-        setRecommendations(recRes.data.recommendations);
+        const turfRes = await API.get("/turfs");
+        setTurfs(turfRes.data.data);
       } catch (error) {
-        console.log("Failed to load recommendations", error);
+        console.log("Failed to load turfs", error);
       }
-    }
-  };
 
-  fetchData();
-}, []);
+      // Private AI recommendations: only for logged-in users
+      const token = localStorage.getItem("token");
+
+      if (token) {
+        try {
+          const recRes = await API.get("/ai/recommendations");
+          setRecommendations(recRes.data.recommendations);
+        } catch (error) {
+          console.log("Failed to load recommendations", error);
+        }
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -44,23 +46,12 @@ function Home() {
                 key={rec.slotId}
                 className="bg-white rounded-xl shadow-md p-5 border-l-4 border-emerald-600"
               >
-                <h2 className="text-xl font-bold">
-                  {rec.turfName}
-                </h2>
-
-                <p className="text-gray-600">
-                  {rec.location}
-                </p>
-
+                <h2 className="text-xl font-bold">{rec.turfName}</h2>
+                <p className="text-gray-600">{rec.location}</p>
                 <p>Sport: {rec.sportType}</p>
-
                 <p>Date: {rec.date}</p>
-
                 <p>Time: {rec.time}</p>
-
-                <p className="font-semibold">
-                  ₹{rec.pricePerHour}/hour
-                </p>
+                <p className="font-semibold">₹{rec.pricePerHour}/hour</p>
 
                 <p className="mt-3 text-sm text-emerald-700">
                   {rec.reason}
@@ -78,9 +69,7 @@ function Home() {
         </>
       )}
 
-      <h1 className="text-3xl font-bold mb-6">
-        Available Turfs
-      </h1>
+      <h1 className="text-3xl font-bold mb-6">Available Turfs</h1>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {turfs.map((turf) => (
@@ -88,17 +77,11 @@ function Home() {
             key={turf._id}
             className="bg-white rounded-xl shadow-md p-5"
           >
-            <h2 className="text-xl font-bold">
-              {turf.name}
-            </h2>
+            <h2 className="text-xl font-bold">{turf.name}</h2>
 
-            <p className="text-gray-600">
-              {turf.location}
-            </p>
+            <p className="text-gray-600">{turf.location}</p>
 
-            <p className="mt-2">
-              Sport: {turf.sportType}
-            </p>
+            <p className="mt-2">Sport: {turf.sportType}</p>
 
             <p className="mt-2 font-semibold">
               ₹{turf.pricePerHour}/hour
