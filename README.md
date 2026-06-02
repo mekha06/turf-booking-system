@@ -1,131 +1,35 @@
-EasyGo – AI Powered Turf Booking Platform
-Overview
+# EasyGo – AI Powered Turf Booking Platform
 
-EasyGo is a full-stack MERN application that allows users to discover sports turfs, book slots online, and make secure payments through Razorpay. The platform also includes role-based authentication for users and turf owners, along with an AI-powered recommendation system for personalized slot suggestions.
+EasyGo is a full-stack MERN application built to simplify turf booking. 
+This idea of mine came from the problem of my friends struggling to books turf where they need to manually call and check with owners or staffs which is tiring ,So i created something that would make their job easy go!⚽
 
-Features
-User Features
-User Registration & Login
-JWT Authentication
-Browse Available Turfs
-View Turf Slots
-Book Slots Online
-Razorpay Payment Integration
-View My Bookings
-Cancel Bookings
-AI Slot Recommendations
-Owner Features
-Owner Login
-Owner Dashboard
-Add New Turfs
-Manage Turf Slots
-View Turf Bookings
-AI Features
-Personalized Slot Recommendations
-Booking History Based Suggestions
-Smart Available Slot Recommendations
-Tech Stack
-Frontend
-React.js
-Vite
-Tailwind CSS
-Axios
-React Router DOM
-React Hot Toast
-Backend
-Node.js
-Express.js
-MongoDB
-Mongoose
-JWT Authentication
-bcryptjs
-Payment Integration
-Razorpay
-Deployment
-Frontend: Vercel
-Backend: Render
-Database: MongoDB Atlas
-Folder Structure
-easygo/
-│
-├── backend/
-│   ├── src/
-│   │   ├── config/
-│   │   ├── controllers/
-│   │   ├── middlewares/
-│   │   ├── models/
-│   │   ├── routes/
-│   │   ├── utils/
-│   │   └── validators/
-│
-├── frontend/
-│   ├── src/
-│   │   ├── api/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   └── assets/
-Installation
-Clone Repository
-git clone https://github.com/mekha06/turf-booking-system.git
-Backend Setup
-cd backend
-npm install
-npm run dev
-Backend Environment Variables
+EasyGo, a platform where users can discover turfs, view available slots, book instantly, and make secure online payments. The platform also includes role-based access for turf owners to manage their turfs and bookings efficiently.
 
-Create .env inside backend:
+And this is the first mern appilcation developed by me!❤️
 
-PORT=5000
-MONGO_URI=your_mongodb_uri
-JWT_SECRET=your_secret_key
-RAZORPAY_KEY_ID=your_key
-RAZORPAY_KEY_SECRET=your_secret
-Frontend Setup
-cd frontend
-npm install
-npm run dev
-Frontend Environment Variables
+### Key Features
 
-Create .env inside frontend:
+* User & Owner Authentication
+* Turf Discovery and Slot Booking
+* Razorpay Payment Integration
+* Booking Management
+* AI-Powered Slot Recommendations
+* Owner Dashboard for Turf Management
 
-VITE_API_BASE_URL=your_backend_url
-VITE_RAZORPAY_KEY_ID=your_key
+### Tech Stack
 
-API Routes
-Auth Routes
-POST /api/auth/register
-POST /api/auth/login
-Turf Routes
-GET /api/turfs
-POST /api/turfs
-Booking Routes
-POST /api/bookings
-GET /api/bookings/my
-PUT /api/bookings/:id/cancel
-AI Recommendation Routes
-GET /api/recommendations
-Deployment Links
-Frontend
+**Frontend:** React.js, Vite, Tailwind CSS
+**Backend:** Node.js, Express.js
+**Database:** MongoDB Atlas
+**Authentication:** JWT
+**Payments:** Razorpay
 
-Add your Vercel link here
+### Future Improvements
 
-Backend
+* Real-time slot availability
+* Nearby turf recommendations
+* AI-based dynamic pricing
+* Email notifications
 
-Add your Render link here
-
-Future Enhancements
-Real-time slot availability
-AI dynamic pricing
-Chatbot assistant
-Nearby turf recommendations
-Email notifications
-Booking analytics dashboard
-Mobile responsive improvements
-Author
-
-Mekha S R
-
-GitHub:
-https://github.com/mekha06
-LinkedIn:
-https://www.linkedin.com/in/mekha-s-r-1930783b1/
+Built with the goal of making turf booking faster, easier, and more convenient for sports enthusiasts.
+Ideas that comes from real problems are worth to build✨
